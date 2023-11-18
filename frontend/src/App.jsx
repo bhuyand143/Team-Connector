@@ -9,6 +9,7 @@ import {
   Routes,
 } from "react-router-dom";
 import LoadingBar from 'react-top-loading-bar'
+import Adduser from "./components/Adduser";
 function App() {
   const [progress, setProgress] = useState(0);
   const setProgression=(progress)=>{
@@ -26,6 +27,7 @@ function App() {
         <Routes>
            <Route exact path="/" element={<Home setProgress={setProgression}/>}/>
            <Route exact path="/users" element={<Users setProgress={setProgression}/>}/>
+           <Route exact path="/adduser" element={<Adduser setProgress={setProgression}/>}/>
         </Routes>
       </Router>
     </>

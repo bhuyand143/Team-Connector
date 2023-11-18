@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const userSchema=mongoose.Schema({
     id:{
         type:Number,
-        require:true
+        require:true,
+        unique:true
     },
     firstname:{
         type:String,

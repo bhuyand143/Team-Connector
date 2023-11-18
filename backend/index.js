@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { query } from 'express'
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './mongodb/connect.js';
@@ -29,21 +29,23 @@ app.route('/api/users').get(async (req, res) => {
     try{
         let page=Number(req.query.page)||0;
         let filter={};
-        const {domain,gender,availability}=req.query;
-        if(domain)
+        const {domain,gender,available}=req.query;
+        if(!(domain==="null" || domain===""))
         {
             filter.domain=domain;
         }
-        if(gender)
+        if(!(gender==="null" || gender===""))
         {
             filter.gender=gender;
         }
-        if(availability)
+        if(available==='false')
         {
-            filter.availability=availability;
+            delete filter.available;
         }
+        if(available==='true') filter.available=1;
+        const num=await User.find(filter);
         const users=await User.find(filter).skip((page-1)*20).limit(20);
-        res.status(200).json({success:true,data:users})
+        res.status(200).json({success:true,data:users,total:num.length});
     }catch(error){
         res.status(500).json({success:false,message:error})
     }
@@ -63,9 +65,11 @@ app.route('/api/users/:id/').get(async (req, res) => {
 app.route('/api/users/').post(async(req,res)=>{
     try{
         const {id,firstname,lastname,email,gender,avatar,domain,available}=req.body;
-        const user=await User.create({id,firstname,lastname,email,gender,avatar,domain,available});
+        let avail=(available==='on')?1:0;
+        const user=await User.create({id,firstname,lastname,email,gender,avatar,domain,available:avail});
         res.status(200).json({success:true,data:user});
     }catch(error){
+        console.log(error);
         res.status(500).json({success:false,message:error})
     }
 })
