@@ -92,6 +92,3 @@ const Adduser = (props) => {
 }
 
 export default Adduser
-
-
-// { "id": 1000, "first_name": "Haydon", "last_name": "Polly", "email": "hpollyrr@upenn.edu", "gender": "Male", "avatar": "https://robohash.org/sequiquiabeatae.png?size=50x50&set=set1", "domain": "Business Development", "available": true }]

@@ -112,12 +112,21 @@ app.route('/api/team/:id').get(async(req,res)=>{
     }
 })
 
+app.route('/api/team/').get(async(req,res)=>{
+    try{
+        const teams=await Team.find({});
+        res.status(200).json({success:true,data:teams})
+    }catch(error){
+        res.status(500).json({success:false,message:error})
+    }
+})
+
 app.route('/api/team/').post(async(req,res)=>{
     try{
-        const crteam={};
-        //domain logic
-        //  await Team.create(crteam);
-        res.status(200).json({success:true,data:crteam});
+        const crteam=req.body;
+        console.log(req.body);
+        const details=await Team.create(crteam);
+        res.status(200).json({success:true,data:details});
     }catch(error){
         res.status(500).json({succes:false,message:error});
     }
@@ -125,7 +134,7 @@ app.route('/api/team/').post(async(req,res)=>{
 
 const startServer = async () => {
     try {
-        connectDB(process.env.LOCAL_URL);
+        connectDB(process.env.MONGODB_URL);
         app.listen(4000, () => {
             console.log('Server started on port http://localhost:4000');
         })

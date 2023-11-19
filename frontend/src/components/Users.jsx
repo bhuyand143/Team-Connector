@@ -12,6 +12,7 @@ const Users = (props) => {
     const [userdetails, setUserdetails] = useState({ id: "", firstname: "", lastname: "", email: "", gender: "", avatar: "", domain: "", available: "" });
     const [searchText, setSearchText] = useState("");
     const [serachTimeout, setSerachTimeout] = useState(null);
+    const [team, setTeam] = useState([]);
     const getUsers = async (page) => {
         try {
             props.setProgress(10);
@@ -74,7 +75,77 @@ const Users = (props) => {
         ref.current.click();
         setUserdetails(currentUser);
     }
-    const handleclick = async(e) => {
+    const addtogroup = async (el) => {
+        if (team.length < 4) {
+            if (!team.includes(el)) {
+                setTeam(team.concat(el));
+            }
+            else {
+                alert('User already added to team!');
+            }
+        }
+        else {
+            alert('Maximum 4 members');
+        }
+    }
+    const handlecreategroup = async (e) => {
+        if (team.length <= 1) {
+            alert('Please add more members');
+        }
+        else {
+            let domain = new Set();
+            let f = false;
+            for (let t of team) {
+                domain.add(t.domain);
+                if (!t.available) {
+                    alert('Please select Again ,One or more user is not available!');
+                    setTeam([]);
+                    f = true;
+                }
+            }
+            if (!f) {
+                if (domain.size >= 2) {
+                    alert('Please select Again ,Multiple Domain!');
+                    setTeam([]);
+                }
+                else {
+                    let teamID = prompt('Give a team ID');
+                    while (!teamID.trim())
+                        teamID = prompt('Please enter a non-empty value:');
+
+                    let teamname = prompt('Give a team name');
+                    while (!teamname.trim())
+                        teamname = prompt('Please enter a non-empty value:');
+                    let teammembers = [];
+                    for (let t of team) {
+                        teammembers.push(t);
+                    }
+                    try {
+                        props.setProgress(10);
+                        const url = `http://localhost:4000/api/team/`
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }, body: JSON.stringify({ id: parseInt(teamID), name: teamname, members: teammembers })
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            console.log(result);
+                            alert('Group Created Succesfully!');
+                            getUsers(page);
+                            props.setProgress(100);
+                        }
+                    } catch (error) {
+                        alert(error);
+                        props.setProgress(100);
+                    }
+                }
+            }
+        }
+    }
+
+    const handleclick = async (e) => {
         refclose.current.click();
         try {
             props.setProgress(10);
@@ -83,7 +154,7 @@ const Users = (props) => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                },  body:JSON.stringify(userdetails)
+                }, body: JSON.stringify(userdetails)
             });
             const json = await response.json();
             if (response.ok) {
@@ -96,11 +167,11 @@ const Users = (props) => {
             props.setProgress(100);
         }
     }
-    const onChange=(e)=>{
-        setUserdetails({...userdetails, [e.target.name]: e.target.value});
+    const onChange = (e) => {
+        setUserdetails({ ...userdetails, [e.target.name]: e.target.value });
     }
-    const handleeditCheck=(e)=>{
-        setUserdetails({...userdetails, [e.target.name]: e.target.checked});
+    const handleeditCheck = (e) => {
+        setUserdetails({ ...userdetails, [e.target.name]: e.target.checked });
     }
     const filterchange = (e) => {
         setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -111,19 +182,19 @@ const Users = (props) => {
         setAvailable(e.target.checked);
     }
 
-    const handleSearch=(e)=>{
+    const handleSearch = (e) => {
         clearTimeout(serachTimeout);
         setSearchText(e.target.value);
         // console.log(searchText);
         setSerachTimeout(
             setTimeout(() => {
-              const searchedUsers = total.filter(
-                (user) =>
-                  (user.firstname+' '+user.lastname).toLowerCase().includes(searchText.toLowerCase())
-              );
-              setUsers(searchedUsers);
+                const searchedUsers = total.filter(
+                    (user) =>
+                        (user.firstname + ' ' + user.lastname).toLowerCase().includes(searchText.toLowerCase())
+                );
+                setUsers(searchedUsers);
             }, 500)
-          );
+        );
     }
     return (
         <>
@@ -143,7 +214,7 @@ const Users = (props) => {
                                     <form class="row g-3">
                                         <div class="col-2">
                                             <label htmlFor="userid" class="form-label">User ID</label>
-                                            <input type="text" id="userid" class="form-control" name='id' aria-label="userid" onChange={onChange} value={userdetails.id} disabled/>
+                                            <input type="text" id="userid" class="form-control" name='id' aria-label="userid" onChange={onChange} value={userdetails.id} disabled />
                                         </div>
                                         <div class="col-5">
                                             <label htmlFor="firstname" class="form-label">First Name</label>
@@ -226,7 +297,7 @@ const Users = (props) => {
                                 <option value={"Agender"}>Agender</option>
                             </select>
                         </div>
-                        <div class="col-3 my-3">
+                        <div class="col-2 my-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name='available' onClick={handlecheck} id="available" />
                                 <label class="form-check-label" htmlFor="available">
@@ -234,15 +305,18 @@ const Users = (props) => {
                                 </label>
                             </div>
                         </div>
-                        <div className='col-3 my-3'>
+                        <div className='col-2 my-3'>
                             <button className='btn btn-success' onClick={() => { getUsers(page); }}>Apply Filter</button>
+                        </div>
+                        <div className='col-2 my-3'>
+                            <button className='btn btn-primary' onClick={handlecreategroup}>Create Group</button>
                         </div>
                     </div>
                     <div className="row">
                         {
                             users.map((el, idx) => {
                                 return <div key={el.id} className='col-md-4'>
-                                    <Cards  deleteUser={deleteUser} updateUser={updateUser} user={el} />
+                                    <Cards deleteUser={deleteUser} updateUser={updateUser} user={el} addtoTeam={addtogroup} team={team}/>
                                 </div>
                             })}
                     </div>

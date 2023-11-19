@@ -1,21 +1,18 @@
 import mongoose from "mongoose";
 
 const teamSchema=mongoose.Schema({
-    team_id:{
+    id:{
         type:Number,
-        require:true
+        require:true,
+        unique:true
     },
     name:{
         type:String,
         require:true
     },
-    domain:{
-        type:String,
-        require:true
-    },
     members:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User'
+        type:Object,
+        require:true
     }]
 });
 
