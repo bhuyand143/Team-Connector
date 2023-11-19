@@ -18,8 +18,8 @@ const Teams = (props) => {
             if (response.ok) {
                 const result = await response.json();
                 setTeams(result.data);
-                if (teams.length == 0)
-                    alert('No teams Present!');
+                // if (teams.length == 0)
+                //     alert('No teams Present!');
                 props.setProgress(100);
             }
         } catch (error) {

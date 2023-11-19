@@ -27,8 +27,8 @@ const Users = (props) => {
                 const result = await response.json();
                 console.log(result);
                 setUsers(result.data);
-                if(users.length==0)
-                alert('No User Present!');
+                // if(users.length==0)
+                // alert('No User Present!');
                 setTotal(result.total);
                 props.setProgress(100);
             }
