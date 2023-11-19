@@ -5,10 +5,12 @@ import PropTypes from 'prop-types'
 
 const Users = (props) => {
     const [users, setUsers] = useState([]);
-    const [total,setTotal]=useState(0);
+    const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [filters, setFilters] = useState({ domain: "", gender: "" });
     const [available, setAvailable] = useState('');
+    const [userdetails, setUserdetails] = useState({ id: "", firstname: "", lastname: "", email: "", gender: "", avatar: "", domain: "", available: "" });
+
     const getUsers = async (page) => {
         try {
             props.setProgress(10);
@@ -67,20 +69,43 @@ const Users = (props) => {
     }, [])
     const ref = useRef(null)
     const refclose = useRef(null)
-    const updateUser = () => {
+    const updateUser = (currentUser) => {
         ref.current.click();
+        setUserdetails(currentUser);
     }
-    const handleclick = (e) => {
+    const handleclick = async(e) => {
         refclose.current.click();
+        try {
+            props.setProgress(10);
+            const url = `http://localhost:4000/api/users/${userdetails.id}`
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },  body:JSON.stringify(userdetails)
+            });
+            const json = await response.json();
+            if (response.ok) {
+                props.setProgress(100);
+                alert("User updated Successfully!");
+                getUsers(page);
+            }
+        } catch (error) {
+            alert(error);
+            props.setProgress(100);
+        }
     }
-    // const onChange()=>{
-
-    // }
+    const onChange=(e)=>{
+        setUserdetails({...userdetails, [e.target.name]: e.target.value});
+    }
+    const handleeditCheck=(e)=>{
+        setUserdetails({...userdetails, [e.target.name]: e.target.checked});
+    }
     const filterchange = (e) => {
         setFilters({ ...filters, [e.target.name]: e.target.value });
     }
 
-    const handlecheck=(e)=>{
+    const handlecheck = (e) => {
         console.log(e.target.checked);
         setAvailable(e.target.checked);
     }
@@ -102,51 +127,51 @@ const Users = (props) => {
                                 <div className="modal-body">
                                     <form class="row g-3">
                                         <div class="col-2">
-                                            <label for="userid" class="form-label">User ID</label>
-                                            <input type="text" id="userid" class="form-control" aria-label="userid" required />
+                                            <label htmlFor="userid" class="form-label">User ID</label>
+                                            <input type="text" id="userid" class="form-control" name='id' aria-label="userid" onChange={onChange} value={userdetails.id} disabled/>
                                         </div>
                                         <div class="col-5">
-                                            <label for="firstname" class="form-label">First Name</label>
-                                            <input type="text" class="form-control" id='firstname' aria-label="First name" required />
+                                            <label htmlFor="firstname" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id='firstname' name='firstname' onChange={onChange} value={userdetails.firstname} aria-label="First name" required />
                                         </div>
                                         <div class="col-5">
                                             <label htmlFor="lastname" className='form-label'>Last Name</label>
-                                            <input type="text" id='lastname' class="form-control" aria-label="Last name" required />
+                                            <input type="text" id='lastname' class="form-control" name='lastname' onChange={onChange} value={userdetails.lastname} aria-label="Last name" required />
                                         </div>
                                         <div className='col-4'>
-                                            <label for="email" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id='email' required />
+                                            <label htmlFor="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" name='email' id='email' onChange={onChange} value={userdetails.email} required />
                                         </div>
                                         <div class="col-4">
-                                            <label for="gender" class="form-label">Gender</label>
-                                            <select id="gender" class="form-select" required>
+                                            <label htmlFor="gender" class="form-label">Gender</label>
+                                            <select id="gender" class="form-select" name='gender' onChange={onChange} value={userdetails.gender} required>
                                                 <option selected>Choose...</option>
-                                                <option>Male</option>
-                                                <option>Female</option>
-                                                <option>Agender</option>
+                                                <option value={"Male"}>Male</option>
+                                                <option value={"Female"}>Female</option>
+                                                <option value={"Agender"}>Agender</option>
                                             </select>
                                         </div>
                                         <div class="col-4">
-                                            <label for="domain" class="form-label">Domain</label>
-                                            <select id="domain" class="form-select" required>
+                                            <label htmlFor="domain" class="form-label">Domain</label>
+                                            <select id="domain" class="form-select" name='domain' onChange={onChange} value={userdetails.domain} required>
                                                 <option selected>Choose...</option>
-                                                <option>Sales</option>
-                                                <option>Finance</option>
-                                                <option>Marketing</option>
-                                                <option>IT</option>
-                                                <option>Management</option>
-                                                <option>UI Designing</option>
-                                                <option>Business Development</option>
+                                                <option value={"Sales"}>Sales</option>
+                                                <option value={"Finance"}>Finance</option>
+                                                <option value={"Marketing"}>Marketing</option>
+                                                <option value={"IT"}>IT</option>
+                                                <option value={"Management"}>Management</option>
+                                                <option value={"UI Designing"}>UI Designing</option>
+                                                <option value={"Business Development"}>Business Development</option>
                                             </select>
                                         </div>
                                         <div class="col">
                                             <label htmlFor="avatar" className='form-label'>Avatar URL</label>
-                                            <input type="text" id='avatar' class="form-control" name='avatar' aria-label="avatar" required />
+                                            <input type="text" id='avatar' class="form-control" name='avatar' onChange={onChange} value={userdetails.avatar} aria-label="avatar" required />
                                         </div>
                                         <div className='col-12'>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required />
-                                                <label class="form-check-label" for="flexCheckDefault">
+                                                <input class="form-check-input" type="checkbox" name='available' onClick={handleeditCheck} checked={userdetails.available} id="available" />
+                                                <label class="form-check-label" htmlFor="available">
                                                     Available
                                                 </label>
                                             </div>
@@ -155,7 +180,7 @@ const Users = (props) => {
                                 </div>
                                 <div className="modal-footer">
                                     <button ref={refclose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" className="btn btn-primary my-3">Update User</button>
+                                    <button type="submit" className="btn btn-primary my-3" onClick={handleclick}>Update User</button>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +214,7 @@ const Users = (props) => {
                         </div>
                         <div class="col-3 my-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name='available' onClick={handlecheck} id="available"/>
+                                <input class="form-check-input" type="checkbox" name='available' onClick={handlecheck} id="available" />
                                 <label class="form-check-label" htmlFor="available">
                                     Available
                                 </label>
@@ -205,7 +230,7 @@ const Users = (props) => {
                                 return <div key={el.id} className='col-md-4'>
                                     <Cards firstname={el.firstname} lastname={el.lastname} id={el.id}
                                         available={el.available} gender={el.gender} email={el.email} domain={el.domain}
-                                        avatar={el.avatar} deleteUser={deleteUser} updateUser={updateUser} />
+                                        avatar={el.avatar} deleteUser={deleteUser} updateUser={updateUser} user={el} />
                                 </div>
                             })}
                     </div>
@@ -213,7 +238,7 @@ const Users = (props) => {
             </div>
             <div className="container d-flex justify-content-between">
                 <button disabled={page <= 1} className="btn btn-dark" onClick={handlePrevClick}>&larr; Previous</button>
-                <button disabled={page >= Math.ceil(total/20)} className="btn btn-dark" onClick={handleNextClick}>Next &rarr;</button>
+                <button disabled={page >= Math.ceil(total / 20)} className="btn btn-dark" onClick={handleNextClick}>Next &rarr;</button>
             </div>
         </>
     )
