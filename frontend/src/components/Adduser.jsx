@@ -7,7 +7,7 @@ const Adduser = (props) => {
         e.preventDefault();
         try {
             props.setProgress(10);
-            const url = `http://localhost:4000/api/users`;
+            const url = `https://team-connector.onrender.com/api/users`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {

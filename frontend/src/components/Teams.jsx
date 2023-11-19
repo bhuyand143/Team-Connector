@@ -8,7 +8,7 @@ const Teams = (props) => {
     const getTeam = async () => {
         try {
             props.setProgress(10);
-            const url = `http://localhost:4000/api/team`
+            const url = `https://team-connector.onrender.com/api/team`
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {

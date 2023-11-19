@@ -16,7 +16,7 @@ const Users = (props) => {
     const getUsers = async (page) => {
         try {
             props.setProgress(10);
-            const url = `http://localhost:4000/api/users?page=${page}&domain=${filters.domain}&gender=${filters.gender}&available=${available}`
+            const url = `https://team-connector.onrender.com/api/users?page=${page}&domain=${filters.domain}&gender=${filters.gender}&available=${available}`
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -40,7 +40,7 @@ const Users = (props) => {
     const deleteUser = async (id) => {
         try {
             props.setProgress(10);
-            const url = `http://localhost:4000/api/users/${id}`
+            const url = `https://team-connector.onrender.com/api/users/${id}`
             const response = await fetch(url, {
                 method: 'DELETE',
                 headers: {
@@ -124,7 +124,7 @@ const Users = (props) => {
                     }
                     try {
                         props.setProgress(10);
-                        const url = `http://localhost:4000/api/team/`
+                        const url = `https://team-connector.onrender.com/api/team/`
                         const response = await fetch(url, {
                             method: 'POST',
                             headers: {
@@ -151,7 +151,7 @@ const Users = (props) => {
         refclose.current.click();
         try {
             props.setProgress(10);
-            const url = `http://localhost:4000/api/users/${userdetails.id}`
+            const url = `https://team-connector.onrender.com/api/users/${userdetails.id}`
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
