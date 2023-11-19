@@ -35,7 +35,7 @@ const Teams = (props) => {
     return (
         <div className='container'>
             {
-                teams.map((team) => {
+                teams.length?teams.map((team) => {
                     return (
                         <div className='row'>
                             <div className='col-3 my-3'>
@@ -56,7 +56,7 @@ const Teams = (props) => {
                             </div>
                         </div>
                     )
-                })
+                }): <h1 className='text-center text-muted'>No Teams Present</h1>
             }
         </div>
     )

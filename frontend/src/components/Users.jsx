@@ -267,7 +267,7 @@ const Users = (props) => {
                                     </form>
                                 </div>
                                 <div className="modal-footer">
-                                    <button ref={refclose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button ref={refclose} type="button" className="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" className="btn btn-primary my-3" onClick={handleclick}>Update User</button>
                                 </div>
                             </div>
@@ -311,16 +311,17 @@ const Users = (props) => {
                             <button className='btn btn-success' onClick={() => { getUsers(page); }}>Apply Filter</button>
                         </div>
                         <div className='col-2 my-3'>
-                            <button className='btn btn-primary' onClick={handlecreategroup}>Create Group</button>
+                            <button className='btn btn-info' onClick={handlecreategroup}>Create Group</button>
                         </div>
                     </div>
                     <div className="row">
                         {
-                            users.map((el, idx) => {
+                           users.length?users.map((el, idx) => {
                                 return <div key={el.id} className='col-md-4'>
                                     <Cards deleteUser={deleteUser} updateUser={updateUser} user={el} addtoTeam={addtogroup} team={team}/>
                                 </div>
-                            })}
+                            }):<h1 className='text-center text-muted'>No Users Present</h1>
+                        }
                     </div>
                 </div>
             </div>
