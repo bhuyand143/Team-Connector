@@ -5,12 +5,13 @@ import PropTypes from 'prop-types'
 
 const Users = (props) => {
     const [users, setUsers] = useState([]);
-    const [total, setTotal] = useState(0);
+    const [total, setTotal] = useState(null);
     const [page, setPage] = useState(1);
     const [filters, setFilters] = useState({ domain: "", gender: "" });
     const [available, setAvailable] = useState('');
     const [userdetails, setUserdetails] = useState({ id: "", firstname: "", lastname: "", email: "", gender: "", avatar: "", domain: "", available: "" });
-
+    const [searchText, setSearchText] = useState("");
+    const [serachTimeout, setSerachTimeout] = useState(null);
     const getUsers = async (page) => {
         try {
             props.setProgress(10);
@@ -110,6 +111,20 @@ const Users = (props) => {
         setAvailable(e.target.checked);
     }
 
+    const handleSearch=(e)=>{
+        clearTimeout(serachTimeout);
+        setSearchText(e.target.value);
+        // console.log(searchText);
+        setSerachTimeout(
+            setTimeout(() => {
+              const searchedUsers = total.filter(
+                (user) =>
+                  (user.firstname+' '+user.lastname).toLowerCase().includes(searchText.toLowerCase())
+              );
+              setUsers(searchedUsers);
+            }, 500)
+          );
+    }
     return (
         <>
             <div className='container'>
@@ -185,15 +200,14 @@ const Users = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className='d-flex my-3'>
-                        <input type="search" className='form-control me-2' placeholder='Search User' />
-                        <button className='btn btn-outline-info'>Search</button>
+                    <div className='d-flex my-4 mt-5'>
+                        <input type="search" className='form-control me-2' placeholder='Search User' name='searchText' onChange={handleSearch} />
                     </div>
                     <div className="row">
                         <div className='col-3 my-3'>
                             <label htmlFor="domain">Domain </label>
                             <select name="domain" id="domain" className=" mb-3 mx-2" onChange={filterchange}>
-                                <option value={"null"}>Choose...</option>
+                                <option value={"null"}>All</option>
                                 <option value={"Sales"}>Sales</option>
                                 <option value={"Finance"}>Finance</option>
                                 <option value={"Marketing"}>Marketing</option>
@@ -206,7 +220,7 @@ const Users = (props) => {
                         <div className='col-3 my-3'>
                             <label htmlFor="gender" >Gender </label>
                             <select name="gender" id="gender" className="mb-3 mx-2" onChange={filterchange}>
-                                <option value={"null"}  >Choose...</option>
+                                <option value={"null"}  >All</option>
                                 <option value={"Male"}>Male</option>
                                 <option value={"Female"}>Female</option>
                                 <option value={"Agender"}>Agender</option>
@@ -236,7 +250,7 @@ const Users = (props) => {
             </div>
             <div className="container d-flex justify-content-between">
                 <button disabled={page <= 1} className="btn btn-dark" onClick={handlePrevClick}>&larr; Previous</button>
-                <button disabled={page >= Math.ceil(total / 20)} className="btn btn-dark" onClick={handleNextClick}>Next &rarr;</button>
+                <button disabled={page >= Math.ceil(1000 / 20)} className="btn btn-dark" onClick={handleNextClick}>Next &rarr;</button>
             </div>
         </>
     )

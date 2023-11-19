@@ -45,7 +45,7 @@ app.route('/api/users').get(async (req, res) => {
         if(available==='true') filter.available=1;
         const num=await User.find(filter);
         const users=await User.find(filter).skip((page-1)*20).limit(20);
-        res.status(200).json({success:true,data:users,total:num.length});
+        res.status(200).json({success:true,data:users,total:num});
     }catch(error){
         res.status(500).json({success:false,message:error})
     }
