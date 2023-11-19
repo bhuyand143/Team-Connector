@@ -228,9 +228,7 @@ const Users = (props) => {
                         {
                             users.map((el, idx) => {
                                 return <div key={el.id} className='col-md-4'>
-                                    <Cards firstname={el.firstname} lastname={el.lastname} id={el.id}
-                                        available={el.available} gender={el.gender} email={el.email} domain={el.domain}
-                                        avatar={el.avatar} deleteUser={deleteUser} updateUser={updateUser} user={el} />
+                                    <Cards  deleteUser={deleteUser} updateUser={updateUser} user={el} />
                                 </div>
                             })}
                     </div>
