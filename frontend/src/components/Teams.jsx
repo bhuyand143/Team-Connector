@@ -18,7 +18,8 @@ const Teams = (props) => {
             if (response.ok) {
                 const result = await response.json();
                 setTeams(result.data);
-                console.log(teams);
+                if (teams.length == 0)
+                    alert('No teams Present!');
                 props.setProgress(100);
             }
         } catch (error) {
@@ -26,7 +27,7 @@ const Teams = (props) => {
             props.setProgress(100);
         }
     }
-    
+
     useEffect(() => {
         getTeam();
         //eslint-disable-next-line
